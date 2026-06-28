@@ -44,17 +44,27 @@ python3 -m http.server 8000
 
 Or simply open `index.html` directly in your browser.
 
+## Add to Home Screen (iPad / iPhone)
+
+Open the site in Safari, tap **Share → Add to Home Screen**, then tap **Add**.
+The game gets the Taco-Vaidor app icon and launches full-screen (standalone),
+with no Safari chrome. iPad, iPad Pro and iPhone icon sizes are all provided.
+
 ## Project structure
 
 ```
 taco-vaidor/
-├── index.html        # page + canvas + start overlay
-├── style.css         # layout and start screen styling
+├── index.html             # page + canvas + start overlay + icon/meta tags
+├── style.css              # layout and start screen styling
+├── manifest.webmanifest   # PWA manifest (standalone, icons, theme)
+├── icons/                 # iPad/iOS home-screen, PWA & favicon images
 ├── js/
-│   ├── audio.js      # Web Audio synth: SFX + procedural BGM loops
-│   └── game.js       # game loop, entities, collisions, rendering
+│   ├── audio.js           # Web Audio synth: SFX + procedural BGM loops
+│   └── game.js            # game loop, entities, collisions, rendering
+├── tools/
+│   └── generate_icons.py  # regenerates the icons (Pillow)
 └── .github/workflows/
-    └── deploy.yml     # GitHub Pages deployment
+    └── deploy.yml          # GitHub Pages deployment
 ```
 
 ## Technical notes

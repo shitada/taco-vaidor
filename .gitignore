@@ -1,0 +1,7 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Node (not used, but keep the tree clean if tooling is added later)
+node_modules/

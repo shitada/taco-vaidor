@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Taco-Vaidor — a browser Space Invaders style game with octopus enemies, giant squid bosses, life potions and procedural chiptune music." />
+  <title>Taco-Vaidor</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app">
+    <h1 class="title">🌮 TACO-VAIDOR 🦑</h1>
+
+    <div id="stage">
+      <canvas id="game" width="800" height="600"></canvas>
+
+      <!-- Start overlay (browsers require a user gesture to start audio) -->
+      <div id="start-overlay" class="overlay">
+        <div class="panel">
+          <h2>TACO-VAIDOR</h2>
+          <p>Octopuses invade and giant squids guard the gates.<br />Blast through 7 stages and survive!</p>
+          <ul class="controls">
+            <li><b>← →</b> / <b>A D</b> — Move</li>
+            <li><b>Space</b> — Shoot</li>
+            <li><b>↑ ↓</b> — Volume</li>
+            <li><b>M</b> — Mute</li>
+            <li><b>R</b> — Restart (after game over)</li>
+          </ul>
+          <button id="start-btn" type="button">▶ START</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint">
+      Move: <b>← →</b> / <b>A D</b> &nbsp;·&nbsp; Shoot: <b>Space</b> &nbsp;·&nbsp;
+      Volume: <b>↑ ↓</b> &nbsp;·&nbsp; Mute: <b>M</b> &nbsp;·&nbsp; Restart: <b>R</b>
+    </p>
+  </div>
+
+  <script src="./js/audio.js"></script>
+  <script src="./js/game.js"></script>
+</body>
+</html>

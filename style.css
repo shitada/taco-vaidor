@@ -135,3 +135,118 @@ body {
 .hint b {
   color: var(--accent);
 }
+
+/* ------------------------------------------------------------------ */
+/* Touch controls (iPad / phones)                                     */
+/* ------------------------------------------------------------------ */
+
+/* Touch-only helpers: hidden on desktop, revealed once JS flags touch */
+.touch-only {
+  display: none;
+}
+body.touch .touch-only {
+  display: block;
+}
+
+#game {
+  touch-action: none; /* drag-to-move shouldn't scroll/zoom the page */
+}
+
+body.touch {
+  overscroll-behavior: contain;
+}
+
+/* Container sits over the stage; gaps fall through to the canvas so a
+   drag anywhere on the play area still moves the ship. */
+.touch-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: none;
+  pointer-events: none;
+}
+body.touch #stage.playing .touch-controls {
+  display: block;
+}
+
+.tc-btn {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1;
+  background: rgba(19, 26, 43, 0.5);
+  border: 2px solid rgba(255, 210, 74, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  transition: transform 0.05s ease, background 0.1s ease, color 0.1s ease;
+}
+
+.tc-btn.pressed {
+  transform: scale(0.93);
+  background: rgba(255, 210, 74, 0.85);
+  color: #1a1300;
+}
+
+.tc-dir {
+  width: 74px;
+  height: 74px;
+  font-size: 30px;
+  bottom: 18px;
+}
+#btn-left {
+  left: 18px;
+}
+#btn-right {
+  left: 104px;
+}
+
+.tc-fire {
+  right: 18px;
+  bottom: 18px;
+  width: 96px;
+  height: 80px;
+  border-radius: 18px;
+  font-size: 19px;
+  letter-spacing: 2px;
+  border-color: rgba(255, 107, 107, 0.7);
+  color: #ffd9d9;
+}
+.tc-fire.pressed {
+  background: rgba(255, 107, 107, 0.9);
+  color: #fff;
+}
+
+.tc-mute {
+  top: 12px;
+  right: 12px;
+  width: 46px;
+  height: 46px;
+  font-size: 20px;
+  border-color: rgba(232, 236, 245, 0.4);
+}
+
+/* Roomier hit targets on larger tablets */
+@media (min-width: 760px) {
+  .tc-dir {
+    width: 84px;
+    height: 84px;
+    font-size: 34px;
+  }
+  #btn-right {
+    left: 120px;
+  }
+  .tc-fire {
+    width: 112px;
+    height: 92px;
+    font-size: 22px;
+  }
+}

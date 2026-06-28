@@ -32,6 +32,14 @@
     <div id="stage">
       <canvas id="game" width="800" height="600"></canvas>
 
+      <!-- On-screen touch controls (shown on touch devices during play) -->
+      <div class="touch-controls" aria-hidden="true">
+        <button id="btn-mute" class="tc-btn tc-mute" type="button" aria-label="Mute or unmute">🔊</button>
+        <button id="btn-left" class="tc-btn tc-dir" type="button" aria-label="Move left">◀</button>
+        <button id="btn-right" class="tc-btn tc-dir" type="button" aria-label="Move right">▶</button>
+        <button id="btn-fire" class="tc-btn tc-fire" type="button" aria-label="Shoot">FIRE</button>
+      </div>
+
       <!-- Start overlay (browsers require a user gesture to start audio) -->
       <div id="start-overlay" class="overlay">
         <div class="panel">
@@ -44,6 +52,7 @@
             <li><b>M</b> — Mute</li>
             <li><b>R</b> — Restart (after game over)</li>
           </ul>
+          <p class="touch-only">📱 On iPad: <b>drag</b> to move (or use the ◀ ▶ buttons) and tap <b>FIRE</b> to shoot.</p>
           <button id="start-btn" type="button">▶ START</button>
         </div>
       </div>
@@ -52,6 +61,9 @@
     <p class="hint">
       Move: <b>← →</b> / <b>A D</b> &nbsp;·&nbsp; Shoot: <b>Space</b> &nbsp;·&nbsp;
       Volume: <b>↑ ↓</b> &nbsp;·&nbsp; Mute: <b>M</b> &nbsp;·&nbsp; Restart: <b>R</b>
+    </p>
+    <p class="hint touch-only">
+      📱 Touch: <b>drag</b> to move &nbsp;·&nbsp; <b>◀ ▶</b> buttons to step &nbsp;·&nbsp; <b>FIRE</b> to shoot
     </p>
   </div>
 

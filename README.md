@@ -21,6 +21,8 @@ Blast your way through **7 stages** of invading octopuses and giant-squid bosses
 
 ## Controls
 
+**Keyboard**
+
 | Action  | Keys                    |
 | ------- | ----------------------- |
 | Move    | `←` `→` or `A` `D`      |
@@ -28,6 +30,20 @@ Blast your way through **7 stages** of invading octopuses and giant-squid bosses
 | Volume  | `↑` `↓`                 |
 | Mute    | `M`                     |
 | Restart | `R` (after game over)   |
+
+**Touch (iPad / iPhone)**
+
+On-screen controls appear automatically on touch devices:
+
+| Action  | Touch                                            |
+| ------- | ------------------------------------------------ |
+| Move    | **Drag** anywhere on the playfield, or hold ◀ / ▶ |
+| Shoot   | Hold the **FIRE** button                         |
+| Mute    | 🔊 button (top-right)                            |
+| Restart | **Tap** the playfield (after game over)          |
+
+Drag-to-move and the FIRE button are multitouch, so you can steer and shoot
+at the same time.
 
 > Browsers block audio until you interact with the page, so click **START**
 > (or press `Space` / `Enter`) to begin.

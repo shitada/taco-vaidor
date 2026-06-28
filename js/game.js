@@ -417,8 +417,12 @@
   let formation, level, score, lives, state;
   let stageElapsedMs, potionSchedule, nextPotionIdx;
   let running = false;
+  let isTouchDevice = false;
   let lastNonzeroVol = 0.5;
   const keys = {};
+  // Touch / pointer input state for iPad and other touch devices.
+  // `dragX` is the game-space x of the active drag, or null when not dragging.
+  const touch = { left: false, right: false, fire: false, dragX: null };
 
   function resetGame() {
     player = { x: WIDTH / 2 - 30, y: HEIGHT - 30 - 26, w: 60, h: 26, cooldown: 0 };
@@ -491,12 +495,17 @@
     }
 
     // ---- Player ----
-    const left = keys["ArrowLeft"] || keys["KeyA"];
-    const right = keys["ArrowRight"] || keys["KeyD"];
-    player.x += ((right ? 1 : 0) - (left ? 1 : 0)) * PLAYER_SPEED;
-    player.x = Math.max(0, Math.min(WIDTH - player.w, player.x));
+    if (touch.dragX != null) {
+      // Drag-to-move: the ship centre tracks the finger (touch-native control).
+      player.x = Math.max(0, Math.min(WIDTH - player.w, touch.dragX - player.w / 2));
+    } else {
+      const left = keys["ArrowLeft"] || keys["KeyA"] || touch.left;
+      const right = keys["ArrowRight"] || keys["KeyD"] || touch.right;
+      player.x += ((right ? 1 : 0) - (left ? 1 : 0)) * PLAYER_SPEED;
+      player.x = Math.max(0, Math.min(WIDTH - player.w, player.x));
+    }
     if (player.cooldown > 0) player.cooldown = Math.max(0, player.cooldown - dt);
-    if (keys["Space"]) playerShoot();
+    if (keys["Space"] || touch.fire) playerShoot();
 
     // ---- Projectiles & movers ----
     bullets.forEach(updateBullet);
@@ -685,7 +694,7 @@
       ctx.fillText("GAME OVER", WIDTH / 2, HEIGHT / 2 - 16);
       ctx.font = "bold 22px 'Courier New', monospace";
       ctx.fillStyle = rgb(240, 240, 240);
-      ctx.fillText("Press R to Restart", WIDTH / 2, HEIGHT / 2 + 24);
+      ctx.fillText(isTouchDevice ? "Tap to Restart" : "Press R to Restart", WIDTH / 2, HEIGHT / 2 + 24);
       ctx.textAlign = "left";
     }
   }
@@ -738,6 +747,8 @@
     running = true;
     const overlay = document.getElementById("start-overlay");
     if (overlay) overlay.classList.add("hidden");
+    const stageEl = document.getElementById("stage");
+    if (stageEl) stageEl.classList.add("playing");
   }
 
   function setupInput() {
@@ -764,6 +775,101 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Touch controls (iPad / phones): on-screen buttons + drag-to-move   */
+  /* ------------------------------------------------------------------ */
+  function setupTouch() {
+    isTouchDevice =
+      "ontouchstart" in window || (navigator.maxTouchPoints || 0) > 0;
+    if (isTouchDevice) document.body.classList.add("touch");
+
+    // Hold-to-act buttons. Pointer events + capture give us reliable
+    // multitouch (move + fire together) and clean release even if the
+    // finger slides off the button.
+    function bindHold(id, onPress, onRelease) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const press = (e) => {
+        e.preventDefault();
+        try {
+          el.setPointerCapture(e.pointerId);
+        } catch (_) {}
+        el.classList.add("pressed");
+        onPress();
+      };
+      const release = (e) => {
+        e.preventDefault();
+        el.classList.remove("pressed");
+        onRelease();
+      };
+      el.addEventListener("pointerdown", press);
+      el.addEventListener("pointerup", release);
+      el.addEventListener("pointercancel", release);
+      el.addEventListener("contextmenu", (e) => e.preventDefault());
+    }
+
+    bindHold("btn-left", () => (touch.left = true), () => (touch.left = false));
+    bindHold("btn-right", () => (touch.right = true), () => (touch.right = false));
+    bindHold(
+      "btn-fire",
+      () => {
+        if (state === "GAMEOVER") resetGame();
+        else touch.fire = true;
+      },
+      () => (touch.fire = false)
+    );
+
+    // Mute toggle (handy on iPad where there's no keyboard).
+    const muteBtn = document.getElementById("btn-mute");
+    if (muteBtn) {
+      const sync = () => {
+        const muted = GameAudio.volume === 0;
+        muteBtn.textContent = muted ? "🔇" : "🔊";
+        muteBtn.setAttribute("aria-pressed", String(muted));
+      };
+      muteBtn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        toggleMute();
+        sync();
+      });
+      sync();
+    }
+
+    // Drag-to-move on the play area (touch / pen only so a desktop mouse
+    // click never hijacks the keyboard-driven ship).
+    let dragId = null;
+    const toGameX = (clientX) => {
+      const rect = canvas.getBoundingClientRect();
+      return ((clientX - rect.left) / rect.width) * WIDTH;
+    };
+    canvas.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") return;
+      if (!running) return;
+      e.preventDefault();
+      if (state === "GAMEOVER") {
+        resetGame();
+        return;
+      }
+      dragId = e.pointerId;
+      touch.dragX = toGameX(e.clientX);
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch (_) {}
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (e.pointerId !== dragId) return;
+      e.preventDefault();
+      touch.dragX = toGameX(e.clientX);
+    });
+    const endDrag = (e) => {
+      if (e.pointerId !== dragId) return;
+      dragId = null;
+      touch.dragX = null;
+    };
+    canvas.addEventListener("pointerup", endDrag);
+    canvas.addEventListener("pointercancel", endDrag);
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Bootstrap                                                          */
   /* ------------------------------------------------------------------ */
   window.addEventListener("DOMContentLoaded", () => {
@@ -774,6 +880,7 @@
     stars = genStars();
     resetGame();
     setupInput();
+    setupTouch();
     requestAnimationFrame(loop);
   });
 })();
